@@ -7,6 +7,8 @@ RUN		apk update \
 
 RUN		apk add nginx
 
+RUN		openssl version
+
 EXPOSE	80
 
 CMD		["nginx", "-g", "daemon off;"]

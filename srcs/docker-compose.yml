@@ -1,0 +1,11 @@
+#NO NEED FOR VERSION 3
+version: '2'
+
+services:
+  nginx:
+    restart: always
+  wordpress:
+    restart: always
+  mariadb:
+    restart: always
+
