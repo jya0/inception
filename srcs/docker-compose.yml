@@ -3,7 +3,7 @@ version: '3'
 
 services:
   nginx:
-    #depends_on: wordpress
+    # depends_on: wordpress
     build:
       context: ./requirements/nginx/
       dockerfile: Dockerfile
@@ -18,12 +18,25 @@ services:
         source: ./requirements/nginx/tools/ssl/
         target: /etc/nginx/ssl/
       #FOR TESTING ONLY
-      - type: bind
-        source: ./requirements/nginx/tools/www/
-        target: /var/www/
+      # - type: bind
+      #   source: ./requirements/nginx/tools/www/
+      #   target: /var/www/
     # restart: always
-  # wordpress:
-  #   restart: always
+  wordpress:
+    # depends_on: mariadb
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+      args:
+        DB_NAME: ${DB_NAME}
+        DB_PASS: ${DB_PASS}
+        DB_USER: ${DB_USER}
+    container_name: wordpress_inception_c
+    volumes:
+      - type: bind
+        source: ./requirements/wordpress/tools/data-wordpress
+        target: /var/www
+    restart: always
   mariadb:
     build:
       context: ./requirements/mariadb
@@ -34,5 +47,12 @@ services:
         DB_USER: ${DB_USER}
         DB_ROOT: ${DB_ROOT}
     container_name: mariadb_inception_c
-    restart: always
+    volumes:
+      - type: bind
+        source: ./requirements/mariadb/tools/data-mariadb
+        target: /var/lib/mysql
+    # restart: always
 
+networks:
+  inception:
+    driver: bridge
