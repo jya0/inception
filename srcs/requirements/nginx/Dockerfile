@@ -4,7 +4,7 @@ FROM	alpine:3.17.5
 
 RUN		apk upgrade --update-cache
 
-RUN		apk add --no-cache nginx && apk add --no-cache openssl
+RUN		apk add --no-cache nginx openssl
 
 RUN		openssl version
 
@@ -16,4 +16,4 @@ RUN		openssl version
 
 EXPOSE	443
 
-CMD		["nginx", "-g", "daemon off;"]
+CMD		[ "nginx", "-g", "daemon off;" ]

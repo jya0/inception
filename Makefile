@@ -18,14 +18,14 @@ COMPOSE_FILE	:= ./srcs/docker-compose.yml
 COMPOSE_FLAGS	:= -f
 
 #by default calls docker compose up
-all: up
+all: build
 
 #depends on build then runs containers in detached mode (-d)
 up: build
 	docker compose $(COMPOSE_FLAGS) $(COMPOSE_FILE) up -d
 
 #builds our Dockerfiles into images first
-build: 
+build:
 	docker compose $(COMPOSE_FLAGS) $(COMPOSE_FILE) build
 
 #don't ask for confirmation (-f) stop containers if running (-s) remove any anonymous volumes (-v)
@@ -40,6 +40,6 @@ down:
 fclean: clean
 	docker compose $(COMPOSE_FLAGS) $(COMPOSE_FILE) down --rmi all
 
-re: fclean all
+re: fclean build
 
 .PHONY: all up down clean fclean re

@@ -1,5 +1,5 @@
 #NO NEED FOR VERSION 3
-version: '2'
+version: '3'
 
 services:
   nginx:
@@ -24,6 +24,15 @@ services:
     # restart: always
   # wordpress:
   #   restart: always
-  # mariadb:
-  #   restart: always
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+      args:
+        DB_NAME: ${DB_NAME}
+        DB_PASS: ${DB_PASS}
+        DB_USER: ${DB_USER}
+        DB_ROOT: ${DB_ROOT}
+    container_name: mariadb_inception_c
+    restart: always
 
