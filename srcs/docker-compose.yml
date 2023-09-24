@@ -3,9 +3,27 @@ version: '2'
 
 services:
   nginx:
-    restart: always
-  wordpress:
-    restart: always
-  mariadb:
-    restart: always
+    #depends_on: wordpress
+    build:
+      context: ./requirements/nginx/
+      dockerfile: Dockerfile
+    container_name: nginx_inception_c
+    ports:
+      - 443:443
+    volumes:
+      - type: bind
+        source: ./requirements/nginx/conf.d/
+        target: /etc/nginx/http.d/
+      - type: bind
+        source: ./requirements/nginx/tools/ssl/
+        target: /etc/nginx/ssl/
+      #FOR TESTING ONLY
+      - type: bind
+        source: ./requirements/nginx/tools/www/
+        target: /var/www/
+    # restart: always
+  # wordpress:
+  #   restart: always
+  # mariadb:
+  #   restart: always
 
