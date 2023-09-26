@@ -1,58 +1,84 @@
-#NO NEED FOR VERSION 3
-version: '3'
+version: '2'
 
 services:
   nginx:
-    # depends_on: wordpress
     build:
       context: ./requirements/nginx/
       dockerfile: Dockerfile
+      args:
+        CERT_: ${CERT_}
+        KEY_: ${KEY_}
+        DOMAIN_NAME: ${DOMAIN_NAME}
+    image: nginx:inception
     container_name: nginx_inception_c
+    depends_on:
+      - wordpress
     ports:
       - 443:443
+    networks:
+      - inception-nw
     volumes:
-      - type: bind
-        source: ./requirements/nginx/conf.d/
-        target: /etc/nginx/http.d/
-      - type: bind
-        source: ./requirements/nginx/tools/ssl/
-        target: /etc/nginx/ssl/
-      #FOR TESTING ONLY
-      # - type: bind
-      #   source: ./requirements/nginx/tools/www/
-      #   target: /var/www/
-    # restart: always
-  wordpress:
-    # depends_on: mariadb
-    build:
-      context: ./requirements/wordpress
-      dockerfile: Dockerfile
-      args:
-        DB_NAME: ${DB_NAME}
-        DB_PASS: ${DB_PASS}
-        DB_USER: ${DB_USER}
-    container_name: wordpress_inception_c
-    volumes:
-      - type: bind
-        source: ./requirements/wordpress/tools/data-wordpress
-        target: /var/www
-    restart: always
+      - ./requirements/nginx/conf/:/etc/nginx/http.d/
+      - wp-volume:/var/www/
+    restart: on-failure
+
   mariadb:
     build:
-      context: ./requirements/mariadb
+      context: ./requirements/mariadb/
       dockerfile: Dockerfile
       args:
         DB_NAME: ${DB_NAME}
-        DB_PASS: ${DB_PASS}
         DB_USER: ${DB_USER}
+        DB_PASS: ${DB_PASS}
         DB_ROOT: ${DB_ROOT}
-    container_name: mariadb_inception_c
+    image: mariadb:inception
+    container_name: mariadb
+    # ports:
+    #   - "3306:3306"
+    networks:
+      - inception-nw
     volumes:
-      - type: bind
-        source: ./requirements/mariadb/tools/data-mariadb
-        target: /var/lib/mysql
-    # restart: always
+      - db-volume:/var/lib/mysql
+    restart: on-failure
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress/
+      dockerfile: Dockerfile
+      args:
+        DB_NAME: ${DB_NAME}
+        DB_USER: ${DB_USER}
+        DB_PASS: ${DB_PASS}
+        DOMAIN_NAME: ${DOMAIN_NAME}
+        WPADUSER: ${WPADUSER}
+        WPADPASS: ${WPADPASS}
+        WPUSER1: ${WPUSER1}
+        WPUSER1PASS: ${WPUSER1PASS}
+    image: wordpress:inception
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    networks:
+      - inception-nw
+    volumes:
+      - wp-volume:/var/www/
+    env_file:
+      - ./.env
+    restart: on-failure
+
+volumes:
+  wp-volume:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/wordpress
+
+  db-volume:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/mariadb
 
 networks:
-  inception:
-    driver: bridge
+    inception-nw:
+        driver: bridge
