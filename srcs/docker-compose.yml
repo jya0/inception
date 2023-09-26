@@ -10,7 +10,7 @@ services:
         KEY_: ${KEY_}
         DOMAIN_NAME: ${DOMAIN_NAME}
     image: nginx:inception
-    container_name: nginx_inception_c
+    container_name: nginx
     depends_on:
       - wordpress
     ports:
@@ -32,7 +32,7 @@ services:
         DB_PASS: ${DB_PASS}
         DB_ROOT: ${DB_ROOT}
     image: mariadb:inception
-    container_name: mariadb_inception_c
+    container_name: mariadb
     # ports:
     #   - "3306:3306"
     networks:
@@ -55,7 +55,7 @@ services:
         WPUSER1: ${WPUSER1}
         WPUSER1PASS: ${WPUSER1PASS}
     image: wordpress:inception
-    container_name: wordpress_inception_c
+    container_name: wordpress
     depends_on:
       - mariadb
     networks:
