@@ -1,4 +1,5 @@
 FROM	alpine:3.17.5
+# https://hub.docker.com/_/alpine latest version 3.18.x
 
 ARG		CERT_ \
 		KEY_ \

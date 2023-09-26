@@ -46,9 +46,7 @@ down:
 #remove the images (--rmi)
 fclean: clean
 	docker compose $(COMPOSE_FLAGS) $(COMPOSE_FILE) down --rmi all -v --remove-orphans
-	docker system prune --all -f
 	sudo rm -rf $(DATA_DIRECTORIES)
-	docker volume prune -f -a
 
 re: fclean build
 
